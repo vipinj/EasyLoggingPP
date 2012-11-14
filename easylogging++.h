@@ -157,7 +157,7 @@ static inline std::string getDateTime(void) {
     if (::easyloggingpp::SHOW_DATE) format += "%d/%m/%Y";
     //    if (::easyloggingpp::SHOW_TIME) format += (std::string((::easyloggingpp::SHOW_DATE ? " " : "")) + std::string("%H:%M:%S"));
     std::stringstream  temp;
-    temp <<t.tv_sec*1000<<t.tv_usec;
+    temp <<t.tv_sec<<t.tv_usec;
     /* temp.assign((std::string)(t.tv_sec * 1000) + (std::string)t.tv_usec); */
     format += temp.str();
     strncpy(::easyloggingpp::dateBuffer,format.c_str(),format.size());
