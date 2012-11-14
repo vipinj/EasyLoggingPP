@@ -48,6 +48,7 @@
 #define _STATUS_TO_FILE 0
 
 #if _LOGGING_ENABLED
+#include <sys/time.h>
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
@@ -71,7 +72,7 @@ const bool SAVE_TO_FILE = true;
 /**
 * Flag to set whether to show date
 */
-const bool SHOW_DATE = true;
+const bool SHOW_DATE = false;
 
 /**
  * Flag to set whether to show time
@@ -91,12 +92,12 @@ const bool SHOW_LOG_FUNCTION = false;
 /**
 * Flag to set whether to show username or not
 */
-const bool SHOW_USERNAME = true;
+const bool SHOW_USERNAME = false;
 
 /**
 * Flag to set whether to show hostname or not
 */
-const bool SHOW_HOSTNAME = true;
+const bool SHOW_HOSTNAME = false;
 
 /**
 * Flag to set whether output value of NOT_SUPPORTED_STRING if extra info is not available on machine
@@ -146,14 +147,24 @@ static inline std::string getDateTime(void) {
   char* envTime = getenv("TIME");
   if ((envDate == NULL) || (envTime == NULL) || ((strcmp(envDate, "")) || (strcmp(envTime, "")))) {
 #endif //_WIN32
-    time_t rawtime;
-    struct tm * timeinfo;
-    time (&rawtime);
-    timeinfo = localtime (&rawtime);
+    //    time_t rawtime;
+    //    struct tm * timeinfo;	
+    struct timeval t;
+    gettimeofday(&t, 0);
+    /* time (&rawtime); */
+    /* timeinfo = localtime (&rawtime); */
     std::string format = "";
     if (::easyloggingpp::SHOW_DATE) format += "%d/%m/%Y";
-    if (::easyloggingpp::SHOW_TIME) format += (std::string((::easyloggingpp::SHOW_DATE ? " " : "")) + std::string("%H:%M:%S"));
-    strftime (::easyloggingpp::dateBuffer, 21, format.c_str(), timeinfo);
+    //    if (::easyloggingpp::SHOW_TIME) format += (std::string((::easyloggingpp::SHOW_DATE ? " " : "")) + std::string("%H:%M:%S"));
+    std::stringstream  temp;
+    temp <<t.tv_sec*1000<<t.tv_usec;
+    /* temp.assign((std::string)(t.tv_sec * 1000) + (std::string)t.tv_usec); */
+    format += temp.str();
+    strncpy(::easyloggingpp::dateBuffer,format.c_str(),format.size());
+    temp.str(std::string());
+    temp.clear();
+    format.clear();
+
 #if _WIN32
   } else {
     if (::easyloggingpp::SHOW_DATE) {
